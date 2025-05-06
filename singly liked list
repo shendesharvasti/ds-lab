@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node *head1 = NULL, *head2 = NULL;
+
+// Function to create a singly linked list
+struct Node* create() {
+    struct Node* head = NULL, *temp = NULL, *newNode;
+    int value;
+    printf("Enter elements (-1 to end): ");
+    while (1) {
+        scanf("%d", &value);
+        if (value == -1) break;
+
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = value;
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            temp = head;
+        } else {
+            temp->next = newNode;
+            temp = temp->next;
+        }
+    }
+    return head;
+}
+
+// Function to display a linked list
+void display(struct Node* head, char* listName) {
+    printf("%s: ", listName);
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d --> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Function to concatenate SLL2 at the end of SLL1
+void concatenate() {
+    if (head1 == NULL) {
+        head1 = head2;
+        return;
+    }
+    struct Node* temp = head1;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = head2;
+    printf("SLL2 concatenated to SLL1\n");
+}
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("1. Create SLL1\n");
+        printf("2. Create SLL2\n");
+        printf("3. Display SLL1\n");
+        printf("4. Display SLL2\n");
+        printf("5. Concatenation\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter elements for SLL1 (-1 to end): ");
+                head1 = create();
+                break;
+            case 2:
+                printf("Enter elements for SLL2 (-1 to end): ");
+                head2 = create();
+                break;
+            case 3:
+                display(head1, "SLL1");
+                break;
+            case 4:
+                display(head2, "SLL2");
+                break;
+            case 5:
+                concatenate();
+                break;
+            case 6:
+                exit(0);
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+    return 0;
+}
