@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *last = NULL;
+
+// Function to insert at a given position
+void insert(int pos, int value) {
+    struct Node *newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+
+    if (pos < 1) {
+        printf("Invalid position\n");
+        return;
+    }
+
+    if (last == NULL) {
+        if (pos != 1) {
+            printf("Position not found\n");
+            free(newNode);
+            return;
+        }
+        newNode->next = newNode;
+        last = newNode;
+        printf("Element inserted\n");
+        return;
+    }
+
+    struct Node *temp = last->next;
+    int count = 1;
+
+    if (pos == 1) {
+        newNode->next = last->next;
+        last->next = newNode;
+        printf("Element inserted\n");
+        return;
+    }
+
+    while (count < pos - 1 && temp != last) {
+        temp = temp->next;
+        count++;
+    }
+
+    if (count == pos - 1) {
+        newNode->next = temp->next;
+        temp->next = newNode;
+        if (temp == last)
+            last = newNode;
+        printf("Element inserted\n");
+    } else {
+        printf("Position not found\n");
+        free(newNode);
+    }
+}
+
+// Function to delete an element
+void deleteElement(int value) {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node *curr = last->next, *prev = last;
+    do {
+        if (curr->data == value) {
+            if (curr == last && curr->next == last) {
+                free(curr);
+                last = NULL;
+            } else {
+                prev->next = curr->next;
+                if (curr == last)
+                    last = prev;
+                free(curr);
+            }
+            printf("Element deleted\n");
+            return;
+        }
+        prev = curr;
+        curr = curr->next;
+    } while (curr != last->next);
+
+    printf("Element not found\n");
+}
+
+// Function to display the list
+void display() {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node *temp = last->next;
+    printf("Elements in CLL are: ");
+    do {
+        printf("%d --> ", temp->data);
+        temp = temp->next;
+    } while (temp != last->next);
+    printf("\n");
+}
+
+// Function to reverse the list
+void reverse() {
+    if (last == NULL || last->next == last) {
+        printf("List reversed\n");
+        return;
+    }
+
+    struct Node *prev = last, *curr = last->next, *next;
+    struct Node *head = last->next;
+
+    do {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    } while (curr != head);
+
+    last = head;
+    printf("List reversed\n");
+}
+
+int main() {
+    int choice, pos, value;
+
+    while (1) {
+        printf("1.Insert 2.Delete
