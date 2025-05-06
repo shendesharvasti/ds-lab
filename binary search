@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+// Function to sort the array using Bubble Sort
+void bubbleSort(int arr[], int n) {
+    int temp;
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-1-i; j++) {
+            if (arr[j] > arr[j+1]) {
+                // Swap arr[j] and arr[j+1]
+                temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}
+
+// Function to perform binary search
+int binarySearch(int arr[], int n, int key) {
+    int low = 0, high = n - 1, mid;
+
+    while (low <= high) {
+        mid = (low + high) / 2;
+
+        if (arr[mid] == key)
+            return mid;
+        else if (arr[mid] < key)
+            low = mid + 1;
+        else
+            high = mid - 1;
+    }
+
+    return -1; // Key not found
+}
+
+int main() {
+    int n, key;
+
+    // Read number of elements
+    printf("Enter value of n : ");
+    scanf("%d", &n);
+
+    int a[n];
+
+    // Read array elements
+    for (int i = 0; i < n; i++) {
+        printf("Enter element for a[%d] : ", i);
+        scanf("%d", &a[i]);
+    }
+
+    // Read key element
+    printf("Enter key element : ");
+    scanf("%d", &key);
+
+    // Sort the array
+    bubbleSort(a, n);
+
+    // Print sorted array
+    printf("After sorting the elements in the array are\n");
+    for (int i = 0; i < n; i++) {
+        printf("Value of a[%d] = %d\n", i, a[i]);
+    }
+
+    // Search for the key
+    int result = binarySearch(a, n, key);
+
+    if (result != -1)
+        printf("The key element %d is found at the position %d\n", key, result);
+    else
+        printf("The key element %d is not found in the array\n", key);
+
+    return 0;
+}
