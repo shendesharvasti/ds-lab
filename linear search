@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main() {
+    int n, i, key, found = 0;
+
+    // Read the number of elements
+    printf("Enter value of n : ");
+    scanf("%d", &n);
+
+    int a[n];  // Declare array of size n
+
+    // Read array elements
+    for (i = 0; i < n; i++) {
+        printf("Enter element for a[%d] : ", i);
+        scanf("%d", &a[i]);
+    }
+
+    // Read the key element to search
+    printf("Enter key element : ");
+    scanf("%d", &key);
+
+    // Perform linear search
+    for (i = 0; i < n; i++) {
+        if (a[i] == key) {
+            printf("The key element %d is found at the position %d\n", key, i);
+            found = 1;
+            break;
+        }
