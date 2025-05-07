@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a node in the binary search tree
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new node with the given data
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a node into the binary search tree
+struct Node* insert(struct Node* root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+
+    if (data < root->data) {
+        root->left = insert(root->left, data);
+    } else {
+        root->right = insert(root->right, data);
+    }
+    return root;
+}
+
+// In-order traversal (left, root, right)
+void inorder(struct Node* root) {
+    if (root == NULL) {
+        printf("Binary Search Tree is empty.\n");
+        return;
+    }
+
+    if (root->left != NULL) inorder(root->left);
+    printf("%d ", root->data);
+    if (root->right != NULL) inorder(root->right);
+}
+
+// Pre-order traversal (root, left, right)
+void preorder(struct Node* root) {
+    if (root == NULL) {
+        printf("Binary Search Tree is empty.\n");
+        return;
+    }
+
+    printf("%d ", root->data);
+    if (root->left != NULL) preorder(root->left);
+    if (root->right != NULL) preorder(root->right);
+}
+
+// Post-order traversal (left, right, root)
+void postorder(struct Node* root) {
+    if (root == NULL) {
+        printf("Binary Search Tree is empty.\n");
+        return;
+    }
+
+    if (root->left != NULL) postorder(root->left);
+    if (root->right != NULL) postorder(root->right);
+    printf("%d ", root->data);
+}
+
+// Function to search for an element in the BST
+void search(struct Node* root, int key) {
+    while (root != NULL) {
+        if (key == root->data) {
+            printf("Element found in the binary search tree.\n");
+            return;
+        } else if (key < root->data) {
+            root = root->left;
+        } else {
+            root = root->right;
+        }
+    }
+    printf("Element not found in the binary search tree.\n");
+}
+
+// Driver code to interact with the user and perform operations on the BST
+int main() {
+    struct Node* root = NULL;
+    int choice, value;
+
+    while (1) {
+        printf("\n1.Insert\n2.Inorder Traversal\n3.Preorder Traversal\n4.Postorder Traversal\n5.Search an element\n6.Exit\n");
+        printf("Enter your option: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter an element to be inserted: ");
+                scanf("%d", &value);
+                root = insert(root, value);
+                printf("Successfully inserted.\n");
+                break;
+
+            case 2:
+                printf("Elements of the BST (in-order traversal): ");
+                inorder(root);
+                printf("\n");
+                break;
+
+            case 3:
+                printf("Elements of the BST (pre-order traversal): ");
+                preorder(root);
+                printf("\n");
+                break;
+
+            case 4:
+                printf("Elements of the BST (post-order traversal): ");
+                postorder(root);
+                printf("\n");
+                break;
+
+            case 5:
+                printf("Enter an element to be searched: ");
+                scanf("%d", &value);
+                search(root, value);
+                break;
+
+            case 6:
+                printf("Exiting...\n");
+                exit(0);
+
+            default:
+                printf("Invalid option. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
