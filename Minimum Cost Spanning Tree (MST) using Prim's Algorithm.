@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_VERTICES 100
+
+// Function to find the vertex with the minimum key value, from the set of vertices not yet included in the MST
+int minKey(int key[], int mstSet[], int vertices) {
+    int min = INT_MAX, minIndex;
+    
+    for (int v = 0; v < vertices; v++) {
+        if (mstSet[v] == 0 && key[v] < min) {
+            min = key[v];
+            minIndex = v;
+        }
+    }
+    return minIndex;
+}
+
+// Function to implement Prim's algorithm to find the MST of a graph
+void prims(int graph[MAX_VERTICES][MAX_VERTICES], int vertices) {
+    int parent[vertices];  // Array to store the constructed MST
+    int key[vertices];     // Key values used to pick minimum weight edge
+    int mstSet[vertices];  // Boolean array to track vertices included in MST
+    
+    // Initialize all keys to a large value, and parent and mstSet to 0
+    for (int i = 0; i < vertices; i++) {
+        key[i] = INT_MAX;
+        mstSet[i] = 0;
+        parent[i] = -1;  // No parent initially
+    }
+    
+    // Start from the first vertex (vertex 0)
+    key[0] = 0;
+    
+    // The MST will have vertices - 1 edges
+    for (int count = 0; count < vertices - 1; count++) {
+        // Pick the minimum key vertex from the set of vertices not yet included in MST
+        int u = minKey(key, mstSet, vertices);
+        
+        // Include the picked vertex in the MST
+        mstSet[u] = 1;
+        
+        // Update the key value and parent index of the adjacent vertices
+        for (int v = 0; v < vertices; v++) {
+            // Update the key and parent if vertex v is not in MST, and weight of u-v is smaller than the current key of v
+            if (graph[u][v] != 0 && mstSet[v] == 0 && graph[u][v] < key[v]) {
+                key[v] = graph[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+    
+    // Print the edges of the MST and the total minimum cost
+    printf("Edge \tWeight\n");
+    int totalCost = 0;
+    for (int i = 1; i < vertices; i++) {
+        printf("%d - %d \t%d\n", parent[i], i, graph[i][parent[i]]);
+        totalCost += graph[i][parent[i]];
+    }
+    printf("\nTotal Minimum Cost of MST: %d\n", totalCost);
+}
+
+int main() {
+    int vertices, edges;
+    
+    // Input the number of vertices and edges
+    printf("Enter number of vertices: ");
+    scanf("%d", &vertices);
+    printf("Enter number of edges: ");
+    scanf("%d", &edges);
+    
+    int graph[MAX_VERTICES][MAX_VERTICES] = {0};  // Initialize the graph with 0
+    
+    // Input the edges and their weights
+    for (int i = 0; i < edges; i++) {
+        int u, v, weight;
+        printf("Enter edge (u v weight): ");
+        scanf("%d %d %d", &u, &v, &weight);
+        graph[u][v] = weight;
+        graph[v][u] = weight;  // As it's an undirected graph
+    }
+    
+    // Call Prim's algorithm to construct the MST and print the result
+    prims(graph, vertices);
+    
+    return 0;
+}
