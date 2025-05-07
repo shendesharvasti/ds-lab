@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* head = NULL;
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the end
+void insert(int data) {
+    struct Node* newNode = createNode(data);
+
+    if (head == NULL) {
+        head = newNode;
+        newNode->next = head;
+        return;
+    }
+
+    struct Node* temp = head;
+    while (temp->next != head)
+        temp = temp->next;
+
+    temp->next = newNode;
+    newNode->next = head;
+}
+
+// Function to display the circular linked list
+void display() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* temp = head;
+    printf("Circular Linked List: ");
+    do {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("\n");
+}
+
+// Function to delete a node by value
+void deleteNode(int key) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node *curr = head, *prev = NULL;
+
+    // Case: only one node
+    if (curr->data == key && curr->next == head) {
+        free(curr);
+        head = NULL;
+        printf("Node deleted.\n");
+        return;
+    }
+
+    // Deleting the head node
+    if (curr->data == key) {
+        while (curr->next != head)
+            curr = curr->next;
+        struct Node* temp = head;
+        curr->next = head->next;
+        head = head->next;
+        free(temp);
+        printf("Node deleted.\n");
+        return;
+    }
+
+    prev = head;
+    curr = head->next;
+    while (curr != head && curr->data != key) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr == head) {
+        printf("Node not found.\n");
+    } else {
+        prev->next = curr->next;
+        free(curr);
+        printf("Node deleted.\n");
+    }
+}
+
+// Function to reverse the circular linked list
+void reverse() {
+    if (head == NULL || head->next == head) {
+        printf("List reversed.\n");
+        return;
+    }
+
+    struct Node *prev = NULL, *curr = head, *next = NULL;
+    struct Node* last = head;
+
+    do {
+        last = last->next;
+    } while (last->next != head);
+
+    do {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    } while (curr != head);
+
+    head->next = prev;
+    head = prev;
+    last->next = head;
+
+    printf("List reversed.\n");
+}
+
+// Menu-driven main function
+int main() {
+    int choice, data;
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Create / Insert Node\n");
+        printf("2. Display List\n");
+        printf("3. Delete Node\n");
+        printf("4. Reverse List\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to insert: ");
+                scanf("%d", &data);
+                insert(data);
+                break;
+            case 2:
+                display();
+                break;
+            case 3:
+                printf("Enter value to delete: ");
+                scanf("%d", &data);
+                deleteNode(data);
+                break;
+            case 4:
+                reverse();
+                break;
+            case 5:
+                printf("Exiting.\n");
+                exit(0);
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    }
+
+    return 0;
+}
