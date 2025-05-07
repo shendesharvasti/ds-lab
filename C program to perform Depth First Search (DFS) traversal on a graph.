@@ -1,0 +1,81 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define MAX_VERTICES 100
+
+// Structure to represent the adjacency list
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+struct Node* graph[MAX_VERTICES];  // Adjacency list for the graph
+int visited[MAX_VERTICES];  // Array to keep track of visited vertices
+
+// Function to create a new adjacency list node
+struct Node* createNode(int vertex) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = vertex;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to add an edge to the adjacency list
+void addEdge(int source, int destination) {
+    struct Node* newNode = createNode(destination);
+    newNode->next = graph[source];
+    graph[source] = newNode;
+}
+
+// Depth First Search (DFS) function
+void DFS(int vertex) {
+    // Mark the current vertex as visited
+    visited[vertex] = 1;
+    printf("%d ", vertex);  // Print the visited vertex
+
+    // Traverse all the adjacent vertices of the current vertex
+    struct Node* temp = graph[vertex];
+    while (temp != NULL) {
+        int adjacent = temp->vertex;
+        if (!visited[adjacent]) {
+            DFS(adjacent);
+        }
+        temp = temp->next;
+    }
+}
+
+int main() {
+    int vertices, edges;
+    int source, destination, startVertex;
+
+    // Initialize graph
+    for (int i = 0; i < MAX_VERTICES; i++) {
+        graph[i] = NULL;
+        visited[i] = 0;  // Initially no vertex is visited
+    }
+
+    // Input the number of vertices and edges
+    printf("Enter no of vertices: ");
+    scanf("%d", &vertices);
+    printf("Enter no of edges: ");
+    scanf("%d", &edges);
+
+    // Input edges
+    for (int i = 0; i < edges; i++) {
+        printf("Enter source: ");
+        scanf("%d", &source);
+        printf("Enter destination: ");
+        scanf("%d", &destination);
+        addEdge(source, destination);  // Add edge from source to destination
+    }
+
+    // Input start vertex for DFS
+    printf("Enter Start Vertex for DFS: ");
+    scanf("%d", &startVertex);
+
+    // Call DFS to start the traversal
+    printf("DFS of graph: \n");
+    DFS(startVertex);
+
+    return 0;
+}
