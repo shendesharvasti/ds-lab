@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define the structure for a student node
+struct Student {
+    int id;
+    char name[50];
+    int age;
+    float grade;
+    struct Student *next;  // Pointer to the next node
+};
+
+// Function to create a new student node
+struct Student* createStudent(int id, char name[], int age, float grade) {
+    struct Student* newStudent = (struct Student*) malloc(sizeof(struct Student));
+    newStudent->id = id;
+    strcpy(newStudent->name, name);
+    newStudent->age = age;
+    newStudent->grade = grade;
+    newStudent->next = NULL;  // Initially, no next student
+    return newStudent;
+}
+
+// Function to insert a new student into the linked list
+void insertStudent(struct Student **head, int id, char name[], int age, float grade) {
+    struct Student *newStudent = createStudent(id, name, age, grade);
+    newStudent->next = *head;
+    *head = newStudent;
+}
+
+// Function to display all students in the linked list
+void displayStudents(struct Student *head) {
+    if (head == NULL) {
+        printf("No students to display.\n");
+        return;
+    }
+    
+    struct Student *temp = head;
+    printf("ID\tName\tAge\tGrade\n");
+    printf("---------------------------------\n");
+    while (temp != NULL) {
+        printf("%d\t%s\t%d\t%.2f\n", temp->id, temp->name, temp->age, temp->grade);
+        temp = temp->next;
+    }
+}
+
+// Function to search for a student by ID
+void searchStudent(struct Student *head, int id) {
+    struct Student *temp = head;
+    while (temp != NULL) {
+        if (temp->id == id) {
+            printf("Student Found: \n");
+            printf("ID: %d\n", temp->id);
+            printf("Name: %s\n", temp->name);
+            printf("Age: %d\n", temp->age);
+            printf("Grade: %.2f\n", temp->grade);
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("Student with ID %d not found.\n", id);
+}
+
+// Function to delete a student by ID
+void deleteStudent(struct Student **head, int id) {
+    struct Student *temp = *head, *prev = NULL;
+
+    // If the student to be deleted is the head
+    if (temp != NULL && temp->id == id) {
+        *head = temp->next; // Move head to next student
+        free(temp); // Free the memory
+        printf("Student with ID %d deleted.\n", id);
+        return;
+    }
+
+    // Search for the student to be deleted
+    while (temp != NULL && temp->id != id) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    // If the student was not found
+    if (temp == NULL) {
+        printf("Student with ID %d not found.\n", id);
+        return;
+    }
+
+    // Unlink the student node
+    prev->next = temp->next;
+    free(temp); // Free the memory
+    printf("Student with ID %d deleted.\n", id);
+}
+
+// Main driver function to interact with the system
+int main() {
+    struct Student *head = NULL;
+    int choice, id, age;
+    char name[50];
+    float grade;
+
+    do {
+        printf("\nStudent Management System\n");
+        printf("1. Insert Student\n");
+        printf("2. Display Students\n");
+        printf("3. Search Student by ID\n");
+        printf("4. Delete Student by ID\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter Student ID: ");
+                scanf("%d", &id);
+                printf("Enter Student Name: ");
+                scanf(" %[^\n]s", name);  // To read a string with spaces
+                printf("Enter Student Age: ");
+                scanf("%d", &age);
+                printf("Enter Student Grade: ");
+                scanf("%f", &grade);
+                insertStudent(&head, id, name, age, grade);
+                printf("Student inserted successfully!\n");
+                break;
+
+            case 2:
+                displayStudents(head);
+                break;
+
+            case 3:
+                printf("Enter Student ID to search: ");
+                scanf("%d", &id);
+                searchStudent(head, id);
+                break;
+
+            case 4:
+                printf("Enter Student ID to delete: ");
+                scanf("%d", &id);
+                deleteStudent(&head, id);
+                break;
+
+            case 5:
+                printf("Exiting the program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
