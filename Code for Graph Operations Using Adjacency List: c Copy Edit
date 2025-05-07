@@ -1,0 +1,177 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+// Define the structure for a node in the adjacency list
+struct node {
+    int vertex;
+    struct node* next;
+};
+
+typedef struct node* GNODE;
+GNODE graph[100];  // Assume max 100 vertices
+
+// Function to insert a vertex into the graph (simple placeholder)
+void insertVertex(int* N) {
+    (*N)++;
+    printf("Vertex %d inserted.\n", *N);
+}
+
+// Function to insert an edge into the graph
+void insertEdge(int source, int destination) {
+    GNODE q = (GNODE)malloc(sizeof(struct node));
+    q->vertex = destination;
+    q->next = NULL;
+    
+    if (graph[source] == NULL) {
+        graph[source] = q;
+    } else {
+        GNODE p = graph[source];
+        while (p->next != NULL) {
+            p = p->next;
+        }
+        p->next = q;
+    }
+    printf("Edge from %d to %d inserted.\n", source, destination);
+}
+
+// Function to delete a vertex from the graph
+void deleteVertex(int vertex, int* N) {
+    if (vertex > *N || vertex <= 0) {
+        printf("Invalid vertex.\n");
+        return;
+    }
+
+    // Remove all edges to this vertex from other vertices
+    for (int i = 1; i <= *N; i++) {
+        GNODE p = graph[i];
+        GNODE prev = NULL;
+        while (p != NULL) {
+            if (p->vertex == vertex) {
+                if (prev == NULL) {
+                    graph[i] = p->next;
+                } else {
+                    prev->next = p->next;
+                }
+                free(p);
+                break;
+            }
+            prev = p;
+            p = p->next;
+        }
+    }
+
+    // Remove all edges from this vertex
+    GNODE temp = graph[vertex];
+    while (temp != NULL) {
+        GNODE next = temp->next;
+        free(temp);
+        temp = next;
+    }
+
+    graph[vertex] = NULL;
+    printf("Vertex %d deleted.\n", vertex);
+    (*N)--;
+}
+
+// Function to delete an edge from the graph
+void deleteEdge(int source, int destination) {
+    GNODE p = graph[source];
+    GNODE prev = NULL;
+    while (p != NULL) {
+        if (p->vertex == destination) {
+            if (prev == NULL) {
+                graph[source] = p->next;
+            } else {
+                prev->next = p->next;
+            }
+            free(p);
+            printf("Edge from %d to %d deleted.\n", source, destination);
+            return;
+        }
+        prev = p;
+        p = p->next;
+    }
+    printf("Edge from %d to %d not found.\n", source, destination);
+}
+
+// Function to print the adjacency list of the graph
+void printAdjacencyList(int N) {
+    if (N == 0) {
+        printf("The graph is empty.\n");
+        return;
+    }
+
+    for (int i = 1; i <= N; i++) {
+        printf("%d => ", i);
+        GNODE p = graph[i];
+        while (p != NULL) {
+            printf("%d -> ", p->vertex);
+            p = p->next;
+        }
+        printf("NULL\n");
+    }
+}
+
+int main() {
+    int N, E, op, s, d;
+    printf("Enter the number of vertices : ");
+    scanf("%d", &N);
+    printf("Enter the number of edges : ");
+    scanf("%d", &E);
+
+    // Initialize the graph array with NULL
+    for (int i = 0; i < 100; i++) {
+        graph[i] = NULL;
+    }
+
+    // Insert edges based on user input
+    for (int i = 0; i < E; i++) {
+        printf("Enter source : ");
+        scanf("%d", &s);
+        printf("Enter destination : ");
+        scanf("%d", &d);
+        insertEdge(s, d);
+    }
+
+    // Main menu loop
+    while (1) {
+        printf("\n1.Insert vertex\n2.Insert edge\n3.Delete vertex\n4.Delete edge\n5.Print adjacency list\n6.Exit\n");
+        printf("Enter your option : ");
+        scanf("%d", &op);
+
+        switch (op) {
+            case 1:
+                insertVertex(&N);
+                break;
+            case 2:
+                printf("Enter the source vertex of the edge : ");
+                scanf("%d", &s);
+                printf("Enter the destination vertex of the edge : ");
+                scanf("%d", &d);
+                insertEdge(s, d);
+                break;
+            case 3:
+                printf("Enter the vertex to be deleted : ");
+                scanf("%d", &s);
+                deleteVertex(s, &N);
+                break;
+            case 4:
+                printf("Enter the source vertex of the edge : ");
+                scanf("%d", &s);
+                printf("Enter the destination vertex of the edge : ");
+                scanf("%d", &d);
+                deleteEdge(s, d);
+                break;
+            case 5:
+                printAdjacencyList(N);
+                break;
+            case 6:
+                printf("Exiting...\n");
+                exit(0);
+            default:
+                printf("Invalid option! Try again.\n");
+        }
+    }
+
+    return 0;
+}
