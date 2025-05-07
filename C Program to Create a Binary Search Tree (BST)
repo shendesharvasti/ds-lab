@@ -1,0 +1,142 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a Node structure for the Binary Search Tree
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new node with given data
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a new node in the BST
+struct Node* insert(struct Node* root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+
+    if (data < root->data) {
+        root->left = insert(root->left, data);
+    } else {
+        root->right = insert(root->right, data);
+    }
+
+    return root;
+}
+
+// Function to perform an inorder traversal of the BST
+void inorder(struct Node* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+
+// Function to perform a preorder traversal of the BST
+void preorder(struct Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+// Function to find the node with the minimum value
+struct Node* findMin(struct Node* root) {
+    while (root && root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+// Function to delete a node from the BST
+struct Node* deleteNode(struct Node* root, int data) {
+    // Base case: If the tree is empty
+    if (root == NULL) {
+        return root;
+    }
+
+    // If the data to be deleted is smaller than the root's data, search in the left subtree
+    if (data < root->data) {
+        root->left = deleteNode(root->left, data);
+    }
+    // If the data to be deleted is larger than the root's data, search in the right subtree
+    else if (data > root->data) {
+        root->right = deleteNode(root->right, data);
+    }
+    // If data is the same as the root's data, this is the node to be deleted
+    else {
+        // Node with only one child or no child
+        if (root->left == NULL) {
+            struct Node* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            struct Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        // Node with two children: Get the inorder successor (smallest in the right subtree)
+        struct Node* temp = findMin(root->right);
+
+        // Copy the inorder successor's content to this node
+        root->data = temp->data;
+
+        // Delete the inorder successor
+        root->right = deleteNode(root->right, temp->data);
+    }
+
+    return root;
+}
+
+int main() {
+    struct Node* root = NULL;
+    int n, value, deleteValue;
+
+    printf("Enter how many nodes you want to insert in BST: ");
+    scanf("%d", &n);
+
+    // Insert nodes into the BST
+    for (int i = 0; i < n; i++) {
+        printf("Enter the value: ");
+        scanf("%d", &value);
+        root = insert(root, value);
+    }
+
+    // Perform inorder traversal
+    printf("Inorder traversal(Always gives ascending order): ");
+    inorder(root);
+    printf("\n");
+
+    // Perform preorder traversal
+    printf("Preorder traversal: ");
+    preorder(root);
+    printf("\n");
+
+    // Deletion operation
+    printf("Enter the data to delete: ");
+    scanf("%d", &deleteValue);
+    root = deleteNode(root, deleteValue);
+
+    // Perform inorder traversal after deletion
+    printf("After deleting %d\n", deleteValue);
+    printf("Inorder traversal: ");
+    inorder(root);
+    printf("\n");
+
+    // Perform preorder traversal after deletion
+    printf("Preorder traversal: ");
+    preorder(root);
+    printf("\n");
+
+    return 0;
+}
